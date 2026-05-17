@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import type { NextFunction, Request, Response } from 'express';
 import AppError from '../utils/AppError.js';
-import Users from '../models/user.model.js';
+import UsersAssignment from '../models/user.model.js';
 
 
 const signup = async (
@@ -12,24 +12,34 @@ const signup = async (
 ) => {
   try {
     const { fullName, email, password } = req.body;
-
+    const role = 'sales';
     if (!fullName || !email || !password) {
       return next(
         new AppError("All fields are required", 400)
       );
     }
 
+    const userExist = await UsersAssignment.findOne({email: email});
+    if(userExist){
+        new AppError("User already exist with this email", 400);
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await Users.create({
+    const user = await UsersAssignment.create({
       fullName,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      role
     });
 
     res.status(201).json({
         success: true,
-        user,
+        message: "User registration successful",
+        user: {
+            fullName: user.fullName,
+            email: user.email
+        },
     })
 
   } catch (error) {
@@ -44,7 +54,7 @@ const login = async(req: Request, res: Response, next: NextFunction) => {
             return next(new AppError("All fields are required", 400));
         }
 
-        const user = await Users.findOne({email: email});
+        const user = await UsersAssignment.findOne({email: email});
         if(!user){
             return next(new AppError("Invalid Credentials", 400));
         }
@@ -57,7 +67,7 @@ const login = async(req: Request, res: Response, next: NextFunction) => {
         }
 
         const token = jwt.sign(
-            { id: user._id, email: user.email },
+            { id: user._id, email: user.email, role: user.role },
             process.env.JWT_SECRET || 'your-secret-key',
             { expiresIn: '24h' }
         );

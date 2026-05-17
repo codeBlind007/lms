@@ -30,7 +30,7 @@ const leadSchema = new Schema<ILeads>({
     },
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     }
 })
 

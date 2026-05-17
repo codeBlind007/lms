@@ -3,7 +3,8 @@ import mongoose, {Schema, Document} from 'mongoose';
 interface iUser extends Document {
     fullName: string,
     email: string,
-    password: string
+    password: string,
+    role: 'admin' | 'sales'
 }
 
 const userSchema: Schema<iUser> =  new Schema({
@@ -13,14 +14,20 @@ const userSchema: Schema<iUser> =  new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        required: true,
+        enum: ['sales', 'admin']
     }
 })
 
-const Users = mongoose.model<iUser>('Users', userSchema);
+const UsersAssignment = mongoose.model<iUser>('UsersAssignment', userSchema);
 
-export default Users;
+export default UsersAssignment;
