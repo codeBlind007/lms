@@ -10,6 +10,16 @@ type AuthTokenPayload = JwtPayload & {
   role: string;
 };
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const authCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? ("none" as const) : ("lax" as const),
+  maxAge: 24 * 60 * 60 * 1000,
+  path: "/",
+};
+
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { fullName, email, password } = req.body;
@@ -70,13 +80,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       { expiresIn: "24h" },
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-      path: "/",
-    });
+    res.cookie("token", token, authCookieOptions);
 
     res.status(200).json({
       success: true,
@@ -118,7 +122,7 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
 
 const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.clearCookie("token", { path: "/" });
+    res.clearCookie("token", authCookieOptions);
     return res.status(200).json({ success: true, message: "Logged out" });
   } catch (error) {
     return next(new AppError("Logout failed", 500));

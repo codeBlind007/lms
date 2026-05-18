@@ -2,6 +2,14 @@ import jwt, {} from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import AppError from "../utils/AppError.js";
 import UsersAssignment from "../models/user.model.js";
+const isProduction = process.env.NODE_ENV === "production";
+const authCookieOptions = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 24 * 60 * 60 * 1000,
+    path: "/",
+};
 const signup = async (req, res, next) => {
     try {
         const { fullName, email, password } = req.body;
@@ -49,13 +57,7 @@ const login = async (req, res, next) => {
             return next(new AppError("Invalid Credentials", 400));
         }
         const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "24h" });
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 24 * 60 * 60 * 1000,
-            path: "/",
-        });
+        res.cookie("token", token, authCookieOptions);
         res.status(200).json({
             success: true,
             message: "Login successful",
@@ -90,7 +92,7 @@ const me = async (req, res, next) => {
 };
 const logout = async (req, res, next) => {
     try {
-        res.clearCookie("token", { path: "/" });
+        res.clearCookie("token", authCookieOptions);
         return res.status(200).json({ success: true, message: "Logged out" });
     }
     catch (error) {
