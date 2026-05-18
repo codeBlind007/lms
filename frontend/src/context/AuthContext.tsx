@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useContext,
@@ -29,8 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async function fetchMe() {
       try {
         const res = await api.get("/auth/me");
-        const me = (res.data && (res.data.user ?? res.data)) as User;
-        if (mounted) setUser(me ?? null);
+        const me = (res.data?.user ?? null) as User | null;
+        if (mounted) setUser(me);
       } catch {
         if (mounted) setUser(null);
       } finally {
@@ -44,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       mounted = false;
     };
-  }, [enableAutoAuth]);
+  }, []);
 
   const login = (newUser: User) => {
     setUser(newUser);
