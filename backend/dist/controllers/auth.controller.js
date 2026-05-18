@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, {} from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import AppError from "../utils/AppError.js";
 import UsersAssignment from "../models/user.model.js";
@@ -79,9 +79,7 @@ const me = async (req, res, next) => {
         const user = await UsersAssignment.findById(decoded.id).select("fullName email role");
         if (!user)
             return res.status(200).json({ success: true, user: null });
-        return res
-            .status(200)
-            .json({
+        return res.status(200).json({
             success: true,
             user: { fullName: user.fullName, email: user.email, role: user.role },
         });

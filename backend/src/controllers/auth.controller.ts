@@ -1,8 +1,14 @@
-import jwt from "jsonwebtoken";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import type { NextFunction, Request, Response } from "express";
 import AppError from "../utils/AppError.js";
 import UsersAssignment from "../models/user.model.js";
+
+type AuthTokenPayload = JwtPayload & {
+  id: string;
+  email: string;
+  role: string;
+};
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -95,18 +101,16 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || "your-secret-key",
-    ) as any;
+    ) as AuthTokenPayload;
     const user = await UsersAssignment.findById(decoded.id).select(
       "fullName email role",
     );
     if (!user) return res.status(200).json({ success: true, user: null });
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        user: { fullName: user.fullName, email: user.email, role: user.role },
-      });
+    return res.status(200).json({
+      success: true,
+      user: { fullName: user.fullName, email: user.email, role: user.role },
+    });
   } catch (error) {
     return next(new AppError("Unable to authenticate user", 401));
   }

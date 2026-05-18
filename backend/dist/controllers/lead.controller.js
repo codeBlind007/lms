@@ -1,6 +1,5 @@
 import Leads from "../models/lead.model.js";
 import AppError from "../utils/AppError.js";
-import { Types } from "mongoose";
 const createLead = async (req, res, next) => {
     try {
         const user = req.user;

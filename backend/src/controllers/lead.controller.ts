@@ -2,7 +2,8 @@ import type { Response, Request, NextFunction } from "express";
 import Leads from "../models/lead.model.js";
 import type { IUser } from "../types/custom.types.js";
 import AppError from "../utils/AppError.js";
-import { Types } from "mongoose";
+
+type LeadListQuery = Record<string, unknown>;
 
 const createLead = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -55,18 +56,18 @@ const getLeads = async (req: Request, res: Response, next: NextFunction) => {
     const search = req.query.search as string;
     const sort = req.query.sort as string;
 
-    const query: any = {};
+    const query: LeadListQuery = {};
 
     if (user.role !== "admin") {
       query.createdBy = user.id;
     }
 
     if (status) {
-      query.status = status.toLowerCase();
+      query.status = status.toLowerCase() as LeadListQuery["status"];
     }
 
     if (source) {
-      query.source = source.toLowerCase();
+      query.source = source.toLowerCase() as LeadListQuery["source"];
     }
 
     if (search) {
@@ -94,13 +95,13 @@ const getLeads = async (req: Request, res: Response, next: NextFunction) => {
       sortOption = { createdAt: -1 };
     }
 
-    const leads = await Leads.find(query)
+    const leads = await Leads.find(query as never)
       .populate("createdBy", "fullName email")
       .sort(sortOption)
       .skip(skip)
       .limit(limit);
 
-    const totalLeads = await Leads.countDocuments(query);
+    const totalLeads = await Leads.countDocuments(query as never);
 
     return res.status(200).json({
       success: true,
