@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// We rely on cookie-based auth (httpOnly secure cookie) so do not set Authorization header here.
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => config);
 
 api.interceptors.response.use(

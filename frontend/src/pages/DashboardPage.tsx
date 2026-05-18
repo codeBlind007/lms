@@ -103,7 +103,6 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Leads</h1>
@@ -162,7 +161,6 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
         {isLoading ? (
           <TableSkeleton />
@@ -177,7 +175,6 @@ export function DashboardPage() {
           />
         ) : (
           <>
-            {/* Desktop table */}
             <div className="hidden md:block">
               <LeadTable
                 leads={leads}
@@ -186,7 +183,6 @@ export function DashboardPage() {
               />
             </div>
 
-            {/* Mobile cards */}
             <div className="md:hidden p-4 space-y-3">
               {leads.map((lead) => (
                 <LeadCard
@@ -201,7 +197,6 @@ export function DashboardPage() {
         )}
       </div>
 
-      {/* Pagination */}
       {!isLoading && !error && leads.length > 0 && (
         <Pagination
           currentPage={currentPage}
@@ -211,7 +206,6 @@ export function DashboardPage() {
         />
       )}
 
-      {/* Delete modal */}
       <ConfirmDeleteModal
         isOpen={!!deletingLead}
         onClose={() => setDeletingLead(null)}

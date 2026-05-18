@@ -21,14 +21,13 @@ export function LoginPage() {
     formState: { errors },
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
-  // Navigation to dashboard now occurs only after explicit successful login
+
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
       const res = await authService.login(data.email, data.password);
       console.log(res);
-      // server sets httpOnly cookie; just set client user state
       login(res.user);
       toast.success(`Welcome back, ${res.user.fullName.split(" ")[0]}!`);
       navigate("/");

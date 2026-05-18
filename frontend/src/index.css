@@ -17,17 +17,16 @@
   --color-brand-900: #2e3188;
 }
 
-/* Slightly larger base font for improved readability */
 html {
-  font-size: 112.5%; /* 18px base (16px * 1.125) */
+  font-size: 112.5%; 
 }
 
-/* Ensure default body uses our theme font */
+
 body {
   font-family: var(--font-sans);
 }
 
-/* Slightly larger heading defaults (will be overridden by Tailwind utilities if used) */
+
 h1 {
   font-size: 1.75rem;
 }

@@ -21,8 +21,6 @@ export function SignupPage() {
     formState: { errors },
   } = useForm<SignupFormData>({ resolver: zodResolver(signupSchema) });
 
-  // Navigation to dashboard now occurs only after explicit successful signup
-
   const onSubmit = async (data: SignupFormData) => {
     setIsLoading(true);
     try {

@@ -11,11 +11,11 @@ import { NotFoundPage } from './pages/NotFoundPage'
 export default function App() {
   return (
     <Routes>
-      {/* Public */}
+  
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
 
-      {/* Protected */}
+   
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/leads/create" element={<CreateLeadPage />} />
@@ -23,7 +23,7 @@ export default function App() {
         <Route path="/leads/:id/edit" element={<EditLeadPage />} />
       </Route>
 
-      {/* Fallback */}
+     
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>

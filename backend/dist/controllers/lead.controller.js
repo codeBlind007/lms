@@ -1,5 +1,11 @@
 import Leads from "../models/lead.model.js";
 import AppError from "../utils/AppError.js";
+const isNonEmptyString = (v) => typeof v === "string" && v.trim().length > 0;
+const nameHasNoNumbers = (name) => !/\d/.test(name);
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const sanitizeLower = (v) => typeof v === "string" ? v.trim().toLowerCase() : undefined;
+const allowedStatus = ["new", "contacted", "qualified", "lost"];
+const allowedSource = ["website", "instagram", "referral"];
 const createLead = async (req, res, next) => {
     try {
         const user = req.user;
@@ -7,16 +13,31 @@ const createLead = async (req, res, next) => {
             return next(new AppError("Unauthorized", 401));
         }
         let { name, email, status, source } = req.body;
-        if (!name || !email || !status || !source) {
-            return next(new AppError("All fields are required", 400));
+        if (!isNonEmptyString(name) ||
+            !isNonEmptyString(email) ||
+            !isNonEmptyString(status) ||
+            !isNonEmptyString(source)) {
+            return next(new AppError("All fields are required and must be valid strings", 400));
         }
-        status = status.toLowerCase(status);
-        source = source.toLowerCase(source);
+        if (!nameHasNoNumbers(name)) {
+            return next(new AppError("Name must not contain numbers", 400));
+        }
+        if (!isValidEmail(email)) {
+            return next(new AppError("Invalid email format", 400));
+        }
+        status = sanitizeLower(status);
+        source = sanitizeLower(source);
+        if (!allowedStatus.includes(status)) {
+            return next(new AppError("Invalid status value", 400));
+        }
+        if (!allowedSource.includes(source)) {
+            return next(new AppError("Invalid source value", 400));
+        }
         const lead = await Leads.create({
-            name,
-            email,
-            status,
-            source,
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            status: status,
+            source: source,
             createdBy: user.id,
         });
         res.status(201).json({
@@ -36,23 +57,32 @@ const getLeads = async (req, res, next) => {
         if (!user) {
             return next(new AppError("Unauthorized", 401));
         }
-        const page = Number(req.query.page) || 1;
+        const page = Number(req.query.page) > 0 ? Number(req.query.page) : 1;
         const limit = 10;
         const skip = (page - 1) * limit;
-        // filters
-        const status = req.query.status;
-        const source = req.query.source;
-        const search = req.query.search;
-        const sort = req.query.sort;
+        const status = sanitizeLower(req.query.status ?? undefined);
+        const source = sanitizeLower(req.query.source ?? undefined);
+        const search = isNonEmptyString(req.query.search)
+            ? req.query.search.trim()
+            : undefined;
+        const sort = isNonEmptyString(req.query.sort)
+            ? req.query.sort.trim()
+            : undefined;
         const query = {};
         if (user.role !== "admin") {
             query.createdBy = user.id;
         }
         if (status) {
-            query.status = status.toLowerCase();
+            if (!allowedStatus.includes(status)) {
+                return next(new AppError("Invalid status filter", 400));
+            }
+            query.status = status;
         }
         if (source) {
-            query.source = source.toLowerCase();
+            if (!allowedSource.includes(source)) {
+                return next(new AppError("Invalid source filter", 400));
+            }
+            query.source = source;
         }
         if (search) {
             query.$or = [
@@ -134,7 +164,6 @@ const deleteLead = async (req, res, next) => {
         if (!user) {
             return next(new AppError("Unauthorized", 401));
         }
-        // role based access control
         if (user.role !== "admin") {
             return next(new AppError("Access denied. Only admin can delete leads", 403));
         }
@@ -144,7 +173,6 @@ const deleteLead = async (req, res, next) => {
         if (!lead) {
             return next(new AppError("Lead not found", 404));
         }
-        // delete lead
         await lead.deleteOne();
         return res.status(200).json({
             success: true,
@@ -158,11 +186,9 @@ const deleteLead = async (req, res, next) => {
 const updateLead = async (req, res, next) => {
     try {
         const user = req.user;
-        // authentication check
         if (!user) {
             return next(new AppError("Unauthorized", 401));
         }
-        // role check
         if (user.role !== "admin" && user.role !== "sales") {
             return next(new AppError("Access denied", 403));
         }
@@ -185,17 +211,38 @@ const updateLead = async (req, res, next) => {
         if (!lead) {
             return next(new AppError("Lead not found or access denied", 404));
         }
-        if (name) {
-            lead.name = name;
+        if (name !== undefined) {
+            if (!isNonEmptyString(name)) {
+                return next(new AppError("Name must be a non-empty string", 400));
+            }
+            if (!nameHasNoNumbers(name)) {
+                return next(new AppError("Name must not contain numbers", 400));
+            }
+            lead.name = name.trim();
         }
-        if (email) {
-            lead.email = email;
+        if (email !== undefined) {
+            if (!isNonEmptyString(email) || !isValidEmail(email)) {
+                return next(new AppError("Invalid email format", 400));
+            }
+            lead.email = email.trim().toLowerCase();
         }
-        if (status) {
-            lead.status = status.toLowerCase();
+        if (status !== undefined) {
+            const s = sanitizeLower(status);
+            if (!s)
+                return next(new AppError("Status must be a string", 400));
+            if (!allowedStatus.includes(s)) {
+                return next(new AppError("Invalid status value", 400));
+            }
+            lead.status = s;
         }
-        if (source) {
-            lead.source = source.toLowerCase();
+        if (source !== undefined) {
+            const src = sanitizeLower(source);
+            if (!src)
+                return next(new AppError("Source must be a string", 400));
+            if (!allowedSource.includes(src)) {
+                return next(new AppError("Invalid source value", 400));
+            }
+            lead.source = src;
         }
         await lead.save();
         await lead.populate("createdBy", "fullName email");
