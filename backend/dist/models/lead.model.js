@@ -18,9 +18,14 @@ const leadSchema = new Schema({
         enum: ['website', 'instagram', 'referral'],
         required: true
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "UsersAssignment",
+        required: true
+    },
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     }
 });
 const Leads = mongoose.model("Leads", leadSchema);

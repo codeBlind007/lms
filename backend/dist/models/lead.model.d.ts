@@ -4,6 +4,7 @@ export interface ILeads extends Document {
     email: string;
     status: 'new' | 'contacted' | 'qualified' | 'lost';
     source: 'website' | 'instagram' | 'referral';
+    createdBy: mongoose.Types.ObjectId;
     createdAt: Date;
 }
 declare const Leads: mongoose.Model<ILeads, {}, {}, {}, mongoose.Document<unknown, {}, ILeads, {}, mongoose.DefaultSchemaOptions> & ILeads & Required<{

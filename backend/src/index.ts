@@ -6,6 +6,7 @@ import errorMiddleware from "./middlewares/error.middleware.js";
 import authRouter from './routes/auth.routes.js'
 import leadRouter from './routes/lead.routes.js'
 import cors from 'cors';
+import type { Request, Response, NextFunction } from "express";
 
 console.log("authRouter import:", typeof authRouter);
 dotenv.config();
@@ -24,17 +25,17 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/auth", (req, res, next) => {
+app.use("/api/auth", (req: Request, res: Response, next: NextFunction) => {
   console.log("Auth route hit");
   next();
 }, authRouter);
 
-app.use("/api/leads", (req, res, next) => {
+app.use("/api/leads", (req: Request, res: Response, next: NextFunction) => {
   console.log("lead route hit");
   next();
 }, leadRouter);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     message: "Hello from the server",
   });

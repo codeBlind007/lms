@@ -3,13 +3,14 @@ interface iUser extends Document {
     fullName: string;
     email: string;
     password: string;
+    role: 'admin' | 'sales';
 }
-declare const Users: mongoose.Model<iUser, {}, {}, {}, mongoose.Document<unknown, {}, iUser, {}, mongoose.DefaultSchemaOptions> & iUser & Required<{
+declare const UsersAssignment: mongoose.Model<iUser, {}, {}, {}, mongoose.Document<unknown, {}, iUser, {}, mongoose.DefaultSchemaOptions> & iUser & Required<{
     _id: mongoose.Types.ObjectId;
 }> & {
     __v: number;
 } & {
     id: string;
 }, any, iUser>;
-export default Users;
+export default UsersAssignment;
 //# sourceMappingURL=user.model.d.ts.map

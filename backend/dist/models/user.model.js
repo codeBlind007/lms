@@ -6,13 +6,19 @@ const userSchema = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        required: true,
+        enum: ['sales', 'admin']
     }
 });
-const Users = mongoose.model('Users', userSchema);
-export default Users;
+const UsersAssignment = mongoose.model('UsersAssignment', userSchema);
+export default UsersAssignment;
 //# sourceMappingURL=user.model.js.map
