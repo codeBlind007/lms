@@ -1,1 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-brand-50: #f0f4ff;
+  --color-brand-100: #e0eaff;
+  --color-brand-200: #c7d7fe;
+  --color-brand-300: #a4bafd;
+  --color-brand-400: #8098fb;
+  --color-brand-500: #6272f8;
+  --color-brand-600: #4a52ee;
+  --color-brand-700: #3d40d5;
+  --color-brand-800: #3335ac;
+  --color-brand-900: #2e3188;
+}
+
+/* Slightly larger base font for improved readability */
+html {
+  font-size: 112.5%; /* 18px base (16px * 1.125) */
+}
+
+/* Ensure default body uses our theme font */
+body {
+  font-family: var(--font-sans);
+}
+
+/* Slightly larger heading defaults (will be overridden by Tailwind utilities if used) */
+h1 {
+  font-size: 1.75rem;
+}
+h2 {
+  font-size: 1.5rem;
+}
+h3 {
+  font-size: 1.25rem;
+}

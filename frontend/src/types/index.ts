@@ -1,52 +1,59 @@
 export interface Lead {
-  _id: string
-  name: string
-  email: string
-  status: 'New' | 'Contacted' | 'Qualified' | 'Lost'
-  source: 'Website' | 'Instagram' | 'Referral'
-  createdAt: string
+  _id: string;
+  name: string;
+  email: string;
+  status: "New" | "Contacted" | "Qualified" | "Lost";
+  source: "Website" | "Instagram" | "Referral";
+  createdAt: string;
+  createdBy?: LeadCreator | string;
+}
+
+export interface LeadCreator {
+  _id: string;
+  fullName: string;
+  email: string;
 }
 
 export interface User {
-  _id: string
-  fullName: string
-  email: string
-  role: 'Admin' | 'Sales'
+  _id: string;
+  fullName: string;
+  email: string;
+  role: "admin" | "sales";
 }
 
 export interface AuthResponse {
-  success: boolean
-  message: string
-  token: string
-  user: User
+  success: boolean;
+  message: string;
+  token: string;
+  user: User;
 }
 
 export interface LeadsResponse {
-  success: boolean
-  currentPage: number
-  totalPages: number
-  totalLeads: number
-  count: number
-  leads: Lead[]
+  success: boolean;
+  currentPage: number;
+  totalPages: number;
+  totalLeads: number;
+  count: number;
+  leads: Lead[];
 }
 
 export interface SingleLeadResponse {
-  success: boolean
-  lead: Lead
+  success: boolean;
+  lead: Lead;
 }
 
 export interface ApiError {
-  success: boolean
-  message: string
+  success: boolean;
+  message: string;
 }
 
 export interface LeadFilters {
-  page: number
-  status: string
-  source: string
-  search: string
-  sort: 'latest' | 'oldest'
+  page: number;
+  status: string;
+  source: string;
+  search: string;
+  sort: "latest" | "oldest";
 }
 
-export type LeadStatus = Lead['status']
-export type LeadSource = Lead['source']
+export type LeadStatus = Lead["status"];
+export type LeadSource = Lead["source"];

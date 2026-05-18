@@ -6,6 +6,7 @@ export interface ILeads extends Document {
     email: string,
     status: 'new' | 'contacted' | 'qualified' | 'lost',
     source: 'website' | 'instagram' | 'referral',
+    createdBy: mongoose.Types.ObjectId,
     createdAt: Date
 }
 
@@ -26,6 +27,11 @@ const leadSchema = new Schema<ILeads>({
     source: {
         type: String,
         enum: ['website', 'instagram', 'referral'],
+        required: true
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "UsersAssignment",
         required: true
     },
     createdAt: {

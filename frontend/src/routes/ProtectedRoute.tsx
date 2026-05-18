@@ -1,11 +1,20 @@
-import { Navigate, Outlet } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { Navbar } from '../components/layouts/Navbar'
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Navbar } from "../components/layouts/Navbar";
+import { Loader } from "../components/ui/Loader";
 
 export function ProtectedRoute() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isAuthLoading } = useAuth();
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <Loader message="Checking your session..." />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -14,5 +23,5 @@ export function ProtectedRoute() {
         <Outlet />
       </main>
     </div>
-  )
+  );
 }

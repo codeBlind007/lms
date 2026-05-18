@@ -10,7 +10,7 @@ export const leadService = {
     if (filters.source) params.set('source', filters.source)
     if (filters.search) params.set('search', filters.search)
     if (filters.sort) params.set('sort', filters.sort)
-
+      console.log(`/leads?${params.toString()}`);
     const { data } = await api.get<LeadsResponse>(`/leads?${params.toString()}`)
     return data
   },
@@ -26,7 +26,7 @@ export const leadService = {
   },
 
   async updateLead(id: string, payload: Partial<LeadFormData>): Promise<SingleLeadResponse> {
-    const { data } = await api.put<SingleLeadResponse>(`/leads/${id}`, payload)
+    const { data } = await api.patch<SingleLeadResponse>(`/leads/${id}`, payload)
     return data
   },
 

@@ -1,29 +1,41 @@
-import { useNavigate } from 'react-router-dom'
-import { Pencil, Trash2, Eye } from 'lucide-react'
-import type { Lead } from '../../types'
-import { StatusBadge, SourceBadge } from '../ui/Badges'
-import { formatDate } from '../../utils'
+import { useNavigate } from "react-router-dom";
+import { Pencil, Trash2, Eye } from "lucide-react";
+import type { Lead } from "../../types";
+import { StatusBadge, SourceBadge } from "../ui/Badges";
+import { formatDate } from "../../utils";
 
 interface LeadTableProps {
-  leads: Lead[]
-  isAdmin: boolean
-  onDeleteClick: (lead: Lead) => void
+  leads: Lead[];
+  isAdmin: boolean;
+  onDeleteClick: (lead: Lead) => void;
 }
 
 export function LeadTable({ leads, isAdmin, onDeleteClick }: LeadTableProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-gray-100">
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Email</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Source</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Created</th>
-            <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Name
+            </th>
+            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Email
+            </th>
+            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Status
+            </th>
+            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Source
+            </th>
+            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Created
+            </th>
+            <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-50">
@@ -51,7 +63,7 @@ export function LeadTable({ leads, isAdmin, onDeleteClick }: LeadTableProps) {
                 {formatDate(lead.createdAt)}
               </td>
               <td className="px-6 py-3.5">
-                <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center justify-end gap-1 opacity-100 transition-opacity">
                   <button
                     onClick={() => navigate(`/leads/${lead._id}`)}
                     className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
@@ -82,5 +94,5 @@ export function LeadTable({ leads, isAdmin, onDeleteClick }: LeadTableProps) {
         </tbody>
       </table>
     </div>
-  )
+  );
 }

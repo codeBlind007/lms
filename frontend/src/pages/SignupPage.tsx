@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { Users } from "lucide-react";
 import { signupSchema, type SignupFormData } from "../schemas";
@@ -12,7 +12,7 @@ import { Button } from "../components/ui/Button";
 import { getErrorMessage } from "../utils";
 
 export function SignupPage() {
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -21,9 +21,7 @@ export function SignupPage() {
     formState: { errors },
   } = useForm<SignupFormData>({ resolver: zodResolver(signupSchema) });
 
-  useEffect(() => {
-    if (isAuthenticated) navigate("/", { replace: true });
-  }, [isAuthenticated, navigate]);
+  // Navigation to dashboard now occurs only after explicit successful signup
 
   const onSubmit = async (data: SignupFormData) => {
     setIsLoading(true);
@@ -33,6 +31,7 @@ export function SignupPage() {
         data.email,
         data.password,
       );
+  
       login(res.user);
       toast.success("Account created! Welcome to LeadFlow.");
       navigate("/");
