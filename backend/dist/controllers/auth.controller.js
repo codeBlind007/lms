@@ -28,12 +28,16 @@ const signup = async (req, res, next) => {
             password: hashedPassword,
             role,
         });
+        const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "24h" });
+        res.cookie("token", token, authCookieOptions);
         res.status(201).json({
             success: true,
             message: "User registration successful",
+            token,
             user: {
                 fullName: user.fullName,
                 email: user.email,
+                role: user.role,
             },
         });
     }
@@ -61,9 +65,11 @@ const login = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "Login successful",
+            token,
             user: {
                 fullName: user.fullName,
                 email: user.email,
+                role: user.role,
             },
         });
     }

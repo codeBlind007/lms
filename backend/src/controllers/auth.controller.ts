@@ -42,12 +42,21 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       role,
     });
 
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: "24h" },
+    );
+
+    res.cookie("token", token, authCookieOptions);
+
     res.status(201).json({
       success: true,
       message: "User registration successful",
       user: {
         fullName: user.fullName,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -88,6 +97,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       user: {
         fullName: user.fullName,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
